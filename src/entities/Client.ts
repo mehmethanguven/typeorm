@@ -1,14 +1,9 @@
 import {
-  BaseEntity,
   Entity,
   Column,
-  PrimaryColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
   OneToMany,
   ManyToMany,
   PrimaryGeneratedColumn,
-  BeforeInsert,
 } from 'typeorm'
 import { Person } from './utils/Person'
 import { Transaction } from './Transaction'

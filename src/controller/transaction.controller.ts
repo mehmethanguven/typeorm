@@ -1,7 +1,7 @@
-import express, { Request, Response } from 'express'
+import { Request, Response } from 'express'
 import { Transaction, TransactionType } from '../entities/Transaction'
 import asyncHandler from 'express-async-handler'
-import { createQueryBuilder } from 'typeorm'
+import { db } from '../db'
 import { Client } from '../entities/Client'
 
 export const createTransaction = asyncHandler(
@@ -10,7 +10,7 @@ export const createTransaction = asyncHandler(
 
     const { type, amount } = req.body
 
-    const client = await Client.findOne({
+    const client = await db.getRepository(Client).findOne({
       where: { id: parseInt(clientId) },
       relations: ['transactions'],
     })
@@ -47,7 +47,9 @@ export const createTransaction = asyncHandler(
 
 export const fetchTransactions = asyncHandler(
   async (req: Request, res: Response): Promise<any> => {
-    const transactions = await createQueryBuilder('transaction')
+    const transactions = await db
+      .getRepository(Transaction)
+      .createQueryBuilder()
       .select([
         'transaction.id',
         'transaction.type',
