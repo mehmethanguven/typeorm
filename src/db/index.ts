@@ -5,6 +5,8 @@ import dotenv from 'dotenv'
 import { Banker } from '../entities/Banker'
 import { Client } from '../entities/Client'
 import { Transaction } from '../entities/Transaction'
+import { User } from '../entities/User'
+
 dotenv.config()
 
 const dbHost = process.env.DB_HOST
@@ -49,6 +51,6 @@ export const db = new DataSource({
   username: dbUser,
   password: dbPassword,
   database: dbDatabase,
-  entities: [Client, Banker, Transaction],
+  entities: [Client, Banker, Transaction, User],
   synchronize: true,
 })

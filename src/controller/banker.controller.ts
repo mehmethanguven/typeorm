@@ -43,7 +43,15 @@ export const createBanker = asyncHandler(
   async (req: Request, res: Response): Promise<any> => {
     const { firstName, lastName, email, cardNumber, employeeNumber } = req.body
     try {
-      const banker = db.getRepository(Banker).create({
+      const isExists = await db
+        .getRepository(Banker)
+        .findOne({ where: { email } })
+
+      if (isExists) {
+        return res.json({ msg: 'Banker is already registered' }).status(401)
+      }
+
+      const banker = await db.getRepository(Banker).create({
         first_name: firstName,
         last_name: lastName,
         email: email,
@@ -100,23 +108,27 @@ export const fetchBankerById = asyncHandler(
 
 export const deleteBanker = asyncHandler(
   async (req: Request, res: Response): Promise<any> => {
-    const { bankerId } = req.params
-    if (!bankerId) {
-      return res.json({ msg: 'invalid' })
-    }
-    const banker = await db.getRepository(Banker).findOne({
-      where: { id: parseInt(bankerId) },
-      relations: ['clients'],
-    })
-    if (!banker) {
-      return res.json({ msg: 'not found' })
-    }
-    if (banker.clients.length > 0) {
-      return res.json({
-        msg: 'banker has clients in order to delete the banker, its clients need to transfer to an active banker',
+    try {
+      const { bankerId } = req.params
+      if (!bankerId) {
+        return res.json({ msg: 'invalid' })
+      }
+      const banker = await db.getRepository(Banker).findOne({
+        where: { id: parseInt(bankerId), is_active: true },
+        relations: ['clients'],
       })
+      if (!banker) {
+        return res.json({ msg: 'not an active banker found' })
+      }
+      if (banker.clients.length > 0) {
+        return res.json({
+          msg: 'banker has clients in order to delete the banker, its clients need to transfer to an active banker',
+        })
+      }
+      banker.is_active = false
+      return res.json({ msg: 'item deleted successfully' })
+    } catch (error) {
+      return res.json({ msg: 'Error' }).status(500)
     }
-    banker.is_active = false
-    return res.json({ msg: 'item deleted successfully' })
   },
 )

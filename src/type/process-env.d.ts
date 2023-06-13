@@ -8,6 +8,10 @@ declare global {
       DB_USER: string
       DB_PASSWORD: string
       DB_DATABASE: string
+      JWT_SECRET: string
+      CLOUDINARY_NAME: string
+      CLOUDINARY_API_KEY: string
+      CLOUDINARY_API_SECRET: string
     }
   }
 }

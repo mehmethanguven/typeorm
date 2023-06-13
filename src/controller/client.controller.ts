@@ -8,6 +8,14 @@ export const createClient = asyncHandler(
     const { firstName, lastName, email, cardNumber, balance } = req.body
 
     try {
+      const isExists = await db
+        .getRepository(Client)
+        .findOne({ where: { email } })
+
+      if (isExists) {
+        return res.json({ msg: 'Client is already registered' }).status(401)
+      }
+
       const client = Client.create({
         first_name: firstName,
         last_name: lastName,
@@ -77,13 +85,13 @@ export const deleteClient = asyncHandler(
 
       const client = await db
         .getRepository(Client)
-        .findOne({ where: { id: parseInt(clientId) } })
+        .findOne({ where: { id: parseInt(clientId), is_active: true } })
 
       // if want to delete
       // const resDelete = await Client.delete(parseInt(clientId));
 
       if (!client) {
-        return res.json({ msg: 'client not found' }).status(404)
+        return res.json({ msg: 'Not an active client found' }).status(404)
       }
       client.is_active = false
       await client.save()

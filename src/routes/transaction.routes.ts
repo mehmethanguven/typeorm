@@ -1,5 +1,5 @@
 import express from 'express'
-
+import { isAuth } from '../middleware/auth'
 import {
   createTransaction,
   fetchTransactions,
@@ -7,7 +7,7 @@ import {
 
 const router = express.Router()
 
-router.post('/api/client/:clientId/transaction', createTransaction)
-router.get('/api/transactions', fetchTransactions)
+router.post('/api/client/:clientId/transaction', isAuth, createTransaction)
+router.get('/api/transactions', isAuth, fetchTransactions)
 
 export default router

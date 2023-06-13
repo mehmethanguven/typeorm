@@ -4,6 +4,12 @@ import { Client } from './Client'
 
 @Entity('banker')
 export class Banker extends Person {
+  @Column({
+    unique: true,
+    length: 10,
+  })
+  card_number: string
+
   @Column({ unique: true, length: 10 })
   employee_number: string
 

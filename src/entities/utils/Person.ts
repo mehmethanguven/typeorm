@@ -24,12 +24,6 @@ export class Person extends BaseEntity {
   email: string
 
   @Column({
-    unique: true,
-    length: 10,
-  })
-  card_number: string
-
-  @Column({
     default: true,
   })
   is_active: boolean
